@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  front-end:
+    build: front-end/
+    depends_on:
+      - 'database'
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./front-end:/app
+
+  server:
+    build: server/
+    depends_on:
+      - 'database'
+    ports:
+      - '3030:3030'
+    volumes:
+      - ./server:/src/app
+    #command: ["npm", "run", "db"]
+    #command: bash -c "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run && npm start"
+#su -c "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run"
+
+  database:
+    image: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./server/database-pg:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=docker
+
+#docker run -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v $(pwd):/var/lib/postgresql/data --name backend_feathers_postgress  postgres
+
+#docker run -d -p 3030:3030 -v $(pwd):/src/app --name feathers_container  feather-back-end8
+
+#docker run -d -p 3000:3000 -v ${PWD}:/app feathers-front-end --name feathers-front
